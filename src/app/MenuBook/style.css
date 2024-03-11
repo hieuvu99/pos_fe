@@ -1,0 +1,15 @@
+menu-book {
+}
+.subtitle {
+  color: #5e5e5e;
+}
+.price {
+  color: #383844;
+}
+.category-list {
+  max-width: 300px;
+}
+.dish {
+    width: 200px;
+    height: 120px;
+}

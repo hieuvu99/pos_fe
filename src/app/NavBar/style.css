@@ -1,0 +1,19 @@
+.nav-bar{
+  width: 206px;
+}
+.logo {
+  font-size: 44px;
+  position: relative;
+  top: 30px;
+  
+}
+.nav-navigator{
+  position: relative;
+  top: 100px;
+  .navigate-button {
+    >*{
+      height: 29px;
+      width: 29px;
+    }
+  }
+}
