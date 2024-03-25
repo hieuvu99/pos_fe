@@ -5,24 +5,34 @@ import { Button } from "@mui/material";
 import { GetMethod } from "../Utilities/Fetch/GetMethod";
 import AddNewDishModal from "../Modal/AddNewDishModal";
 import { Product } from "../Utilities/Interfacte/Product/Index";
+import ViewDishModel from "../Modal/ViewDishModal";
 function MenuBook() {
   const [data, setData] = useState<Product[] | null>(null);
-  const [category, setCategory] = useState<String>("refreshment");
-  const [open, setOpen] = React.useState(false);
-
+  const [category, setCategory] = useState<String | null>("Refreshment");
+  const [openViewDishModal, setOpenViewDishModal] = React.useState(false);
+  const [openAddNewDishModal, setOpenAddNewDishModal] = React.useState(false);
+  const [viewedProduct, setViewedProduct] = useState<Product | null>(null);
   useEffect(() => {
     try {
-      GetMethod("/products").then((result: any) => {
+      GetMethod(`/products?category=${category}`).then((result: any) => {
         setData(result.data);
       });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [category]);
+  }, [category, viewedProduct]);
   return (
     <div className="menu-book flex-1 ">
       {/* <div className="model"> */}
-        <AddNewDishModal open={open} handleClose={() => setOpen(false)} />
+      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)} />
+      <ViewDishModel
+        open={openViewDishModal}
+        handleClose={() => {
+          setOpenViewDishModal(false);
+          setViewedProduct(null);
+        }}
+        product={viewedProduct}
+      />
       {/* </div> */}
       <div>
         <div className="text-4xl font-extrabold m-5">
@@ -33,18 +43,23 @@ function MenuBook() {
         </div>
       </div>
       <div className="grid grid-cols-2 ">
-        <div className=" grid-cols-2 m-5 mt-10 flex-col category-list gap-2 align-middle">
-          <div className="flex flex-wrap">
+        <div className="grid grid-cols-4 m-5 mt-10 flex-col w-8/12">
+          <div className="flex-col">
             <Button
               variant="outlined"
-              onClick={() => setCategory("refreshment")}
+              onClick={() => setCategory("Refreshment")}
             >
               Refreshment
             </Button>
           </div>
-          <div className="flex">
-            <Button variant="outlined" onClick={() => setCategory("classics")}>
+          <div className="flex-col">
+            <Button variant="outlined" onClick={() => setCategory("Classics")}>
               Classics
+            </Button>
+          </div>
+          <div className="flex-col">
+            <Button variant="outlined" onClick={() => setCategory("Tea Latte")}>
+              Tea Latte
             </Button>
           </div>
         </div>
@@ -52,7 +67,7 @@ function MenuBook() {
           <Button
             variant="outlined"
             onClick={() => {
-              setOpen(true);
+              setOpenAddNewDishModal(true);
             }}
           >
             Add new Item
@@ -64,7 +79,13 @@ function MenuBook() {
       ) : (
         <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8">
           {data!.map((product) => (
-            <div className="text-2xl ms-5 dish border-solid shadow-lg  grid grid-cols-1">
+            <div
+              className="text-2xl ms-5 dish border-solid shadow-lg  grid grid-cols-1"
+              onClick={() => {
+                setOpenViewDishModal(true);
+                setViewedProduct(product);
+              }}
+            >
               <div className="justify-end flex me-5 mt-2">
                 <p>{product.productName}</p>
               </div>

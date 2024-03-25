@@ -3,17 +3,15 @@ import React, { FormEventHandler, useEffect, useState } from "react";
 import "./style.css";
 import { Product } from "@/app/Utilities/Interfacte/Product/Index";
 import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
+import { env } from "process";
 
 interface property {
   open: boolean;
   handleClose: () => void;
 }
 // const setValue()
-function AddnNewDishModal(Property: property) {
+function AddNewDishModal(Property: property) {
   const { open, handleClose } = Property;
-  // const [name, setName] = useState<string | null>(null);
-  // const [type, setType] = useState<string | null>(null);
-  // const [price, setPrice] = useState<number | null>(null);
 
   const [newProduct, setNewProduct] = useState<Product | null>({
     productID: null,
@@ -26,7 +24,7 @@ function AddnNewDishModal(Property: property) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
+    console.log(env.NODE_ENV)
     switch (name) {
       case "name":
         setNewProduct({ ...newProduct, productName: value.trim() } as Product);
@@ -124,4 +122,4 @@ function AddnNewDishModal(Property: property) {
   );
 }
 
-export default AddnNewDishModal;
+export default AddNewDishModal;
