@@ -24,14 +24,14 @@ function MenuBook() {
   return (
     <div className="menu-book flex-1 ">
       {/* <div className="model"> */}
-      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)} />
+      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)}/>
       <ViewDishModel
         open={openViewDishModal}
         handleClose={() => {
           setOpenViewDishModal(false);
           setViewedProduct(null);
         }}
-        product={viewedProduct}
+        product={viewedProduct || null}
       />
       {/* </div> */}
       <div>
