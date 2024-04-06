@@ -21,10 +21,27 @@ function MenuBook() {
       console.error("Error fetching data:", error);
     }
   }, [category, viewedProduct]);
+  var replacearray = data;
+  const createProduct = (product: Product) =>{
+    replacearray?.push(product)
+    setData(replacearray)
+  }
+  const editProduct = (product: Product) =>{
+    var foundIndex = data?.findIndex((element:Product)=> element.productID == product.productID)
+    if(replacearray) replacearray[foundIndex as number] = product;
+    setData(replacearray)
+  }
+  const deleteProduct = (product: Product) =>{
+    var foundIndex = data?.findIndex((element:Product)=> element.productID == product.productID)
+    if(replacearray) replacearray[foundIndex as number] = product;
+    replacearray?.slice(foundIndex,1)
+    setData(replacearray)
+  }
+
   return (
     <div className="menu-book flex-1 ">
       {/* <div className="model"> */}
-      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)}/>
+      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)} createProduct={(product:Product)=>createProduct(product)}/>
       <ViewDishModel
         open={openViewDishModal}
         handleClose={() => {
@@ -32,6 +49,8 @@ function MenuBook() {
           setViewedProduct(null);
         }}
         product={viewedProduct || null}
+        editProduct={(product)=>editProduct(product)}
+        deleteProduct={(product)=>deleteProduct(product)}
       />
       {/* </div> */}
       <div>

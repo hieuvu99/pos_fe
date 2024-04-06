@@ -8,10 +8,11 @@ import { env } from "process";
 interface property {
   open: boolean;
   handleClose: () => void;
+  createProduct: (product: Product) => void;
 }
 // const setValue()
 function AddNewDishModal(Property: property) {
-  const { open, handleClose } = Property;
+  const { open, handleClose, createProduct } = Property;
 
   const [newProduct, setNewProduct] = useState<Product | null>({
     productID: null,

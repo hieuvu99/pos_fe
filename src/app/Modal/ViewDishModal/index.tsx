@@ -11,11 +11,13 @@ interface property {
   open: boolean;
   handleClose: () => void;
   product: Product | null;
+  deleteProduct: (product : Product) => void;
+  editProduct: (product : Product) => void;
 }
 // const setValue()
 function ViewDishModel(Property: property) {
-  const { open, handleClose, product } = Property;
-  const [editProduct, setEditProduct] = useState<Product>();
+  const { open, handleClose, product, editProduct, deleteProduct } = Property;
+  const [editedProduct, setEditProduct] = useState<Product>();
   const [mode, setMode] = useState<"edit" | "view">("view");
 
   useEffect(() => {
@@ -52,11 +54,6 @@ function ViewDishModel(Property: property) {
     }
   };
 
-  const handleFormSubmit = (e: any) => {
-    PutMethod("/products", editProduct as Product);
-    e.preventDefault();
-  };
-
   return (
     <Modal
       open={open}
@@ -66,7 +63,7 @@ function ViewDishModel(Property: property) {
       aria-labelledby="parent-modal-title"
       aria-describedby="parent-modal-description"
     >
-      <form onSubmit={handleFormSubmit}>
+      <form>
         <div className=" bg-white grid grid-rows-4 add-dish-modal absolute justify-center p-5">
           <div>
             <div className="justify-center flex m-5 h-1 border-solid shadow-lg font-bold text-3xl title">
@@ -87,7 +84,7 @@ function ViewDishModel(Property: property) {
                 }}
                 type="text"
                 className="md:w-72 lg:w-96"
-                value={editProduct?.productName as string}
+                value={editedProduct?.productName as string}
               />
             )}
           </div>
@@ -103,7 +100,7 @@ function ViewDishModel(Property: property) {
                   name="type"
                   className=" md:w-72 lg:w-96"
                   onChange={handleInputChange}
-                  value={editProduct?.productType as string}
+                  value={editedProduct?.productType as string}
                 >
                   <option value="Refreshment">Refreshment</option>
                   <option value="Classics">Classics</option>
@@ -126,7 +123,7 @@ function ViewDishModel(Property: property) {
                   setEditProduct;
                 }}
                 step="0.01"
-                value={editProduct?.price as number}
+                value={editedProduct?.price as number}
               />
             )}
           </div>
@@ -152,6 +149,7 @@ function ViewDishModel(Property: property) {
                           PatchMethod("/products/deletes-product", [
                             product?.productID,
                           ]);
+                          deleteProduct(product)
                         handleCloseModal;
                       }}
                     />
@@ -163,11 +161,12 @@ function ViewDishModel(Property: property) {
                     <Save
                       onClick={() => {
                         if (
-                          product?.price != editProduct?.price ||
-                          product?.productName != editProduct?.productName ||
-                          product?.productType != editProduct?.productType!
+                          product?.price != editedProduct?.price ||
+                          product?.productName != editedProduct?.productName ||
+                          product?.productType != editedProduct?.productType!
                         ) {
-                          PutMethod("/products", editProduct as Product);
+                          PutMethod("/products", editedProduct as Product);
+                          editProduct(editedProduct as Product);
                           handleCloseModal();
                         }
                       }}
