@@ -11,12 +11,11 @@ interface property {
   open: boolean;
   handleClose: () => void;
   product: Product | null;
-  deleteProduct: (product : Product) => void;
-  editProduct: (product : Product) => void;
+  setCategory: (category: string) => void;
 }
 // const setValue()
 function ViewDishModel(Property: property) {
-  const { open, handleClose, product, editProduct, deleteProduct } = Property;
+  const { open, handleClose, product , setCategory} = Property;
   const [editedProduct, setEditProduct] = useState<Product>();
   const [mode, setMode] = useState<"edit" | "view">("view");
 
@@ -25,8 +24,8 @@ function ViewDishModel(Property: property) {
   }, [product]);
 
   const handleCloseModal = () => {
-    setMode("view");
     handleClose();
+    setMode("view");
   };
 
   const handleInputChange = (
@@ -37,19 +36,19 @@ function ViewDishModel(Property: property) {
     switch (name) {
       case "name":
         setEditProduct({
-          ...editProduct,
+          ...editedProduct,
           productName: value.trim(),
         } as Product);
         break;
       case "type":
         setEditProduct({
-          ...editProduct,
+          ...editedProduct,
           productType: value.trim(),
         } as Product);
         break;
       case "price":
         let newValue = parseFloat(value.trim());
-        setEditProduct({ ...editProduct, price: newValue } as Product);
+        setEditProduct({ ...editedProduct, price: newValue } as Product);
         break;
     }
   };
@@ -130,13 +129,17 @@ function ViewDishModel(Property: property) {
 
           <div className="grid grid-cols-2 gap-1 m-5">
             <div className="justify-start flex">
-              <ArrowBack onClick={handleCloseModal} />
+              <ArrowBack
+                onClick={handleCloseModal}
+                className="cursor-pointer"
+              />
             </div>
             <div className="grid grid-cols-2">
               {mode == "view" && product ? (
                 <>
                   <div className="justify-start flex">
                     <Edit
+                      className="cursor-pointer"
                       onClick={() => {
                         setMode("edit");
                       }}
@@ -144,12 +147,12 @@ function ViewDishModel(Property: property) {
                   </div>
                   <div className="justify-end flex">
                     <Delete
+                      className="cursor-pointer"
                       onClick={() => {
                         product?.productID &&
                           PatchMethod("/products/deletes-product", [
                             product?.productID,
                           ]);
-                          deleteProduct(product)
                         handleCloseModal;
                       }}
                     />
@@ -157,19 +160,21 @@ function ViewDishModel(Property: property) {
                 </>
               ) : (
                 <>
-                  <div className="justify-start flex">
+                  <div className=" justify-start flex">
                     <Save
-                      onClick={() => {
+                      onClick={(e) => {
                         if (
                           product?.price != editedProduct?.price ||
                           product?.productName != editedProduct?.productName ||
                           product?.productType != editedProduct?.productType!
                         ) {
                           PutMethod("/products", editedProduct as Product);
-                          editProduct(editedProduct as Product);
+                          setCategory(editedProduct?.productType as string)
                           handleCloseModal();
                         }
+                        // e.preventDefault
                       }}
+                      className="cursor-pointer"
                     />
                   </div>
                   <div className="justify-end flex">
@@ -178,6 +183,7 @@ function ViewDishModel(Property: property) {
                         setMode("view");
                         product && setEditProduct(product);
                       }}
+                      className="cursor-pointer"
                     />
                   </div>
                 </>

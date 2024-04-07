@@ -8,16 +8,15 @@ import { env } from "process";
 interface property {
   open: boolean;
   handleClose: () => void;
-  createProduct: (product: Product) => void;
 }
 // const setValue()
 function AddNewDishModal(Property: property) {
-  const { open, handleClose, createProduct } = Property;
+  const { open, handleClose } = Property;
 
   const [newProduct, setNewProduct] = useState<Product | null>({
     productID: null,
     productName: null,
-    productType: null,
+    productType: "Refreshment",
     price: null,
   });
 
@@ -25,13 +24,13 @@ function AddNewDishModal(Property: property) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log(env.NODE_ENV)
+    console.log(env.NODE_ENV);
     switch (name) {
       case "name":
         setNewProduct({ ...newProduct, productName: value.trim() } as Product);
         break;
       case "type":
-        setNewProduct({ ...newProduct, productType: value.trim() } as Product);
+        setNewProduct({ ...newProduct, productType: value } as Product);
         break;
       case "price":
         let newValue = parseFloat(value.trim());
@@ -40,9 +39,10 @@ function AddNewDishModal(Property: property) {
     }
   };
 
-  const handleFormSubmit = (e : any) => {
+  const handleFormSubmit = (e: any) => {
     PostMethod("/products", newProduct as Product);
-    e.preventDefault();
+    // e.preventDefault();
+    handleClose
   };
 
   return (

@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import { Button } from "@mui/material";
 import { GetMethod } from "../Utilities/Fetch/GetMethod";
 import AddNewDishModal from "../Modal/AddNewDishModal";
 import { Product } from "../Utilities/Interfacte/Product/Index";
 import ViewDishModel from "../Modal/ViewDishModal";
+import { Button } from "@mui/material";
 function MenuBook() {
   const [data, setData] = useState<Product[] | null>(null);
   const [category, setCategory] = useState<String | null>("Refreshment");
@@ -14,34 +14,38 @@ function MenuBook() {
   const [viewedProduct, setViewedProduct] = useState<Product | null>(null);
   useEffect(() => {
     try {
-      GetMethod(`/products?category=${category}`).then((result: any) => {
-        setData(result.data);
-      });
+      setTimeout(()=>{
+        GetMethod(`/products?category=${category}`).then((result: any) => {
+          setData(result.data);
+        });
+      },1)
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }, [category, viewedProduct]);
   var replacearray = data;
-  const createProduct = (product: Product) =>{
-    replacearray?.push(product)
-    setData(replacearray)
-  }
-  const editProduct = (product: Product) =>{
-    var foundIndex = data?.findIndex((element:Product)=> element.productID == product.productID)
-    if(replacearray) replacearray[foundIndex as number] = product;
-    setData(replacearray)
-  }
-  const deleteProduct = (product: Product) =>{
-    var foundIndex = data?.findIndex((element:Product)=> element.productID == product.productID)
-    if(replacearray) replacearray[foundIndex as number] = product;
-    replacearray?.slice(foundIndex,1)
-    setData(replacearray)
-  }
+  const editProduct = (product: Product) => {
+    var foundIndex = data?.findIndex(
+      (element: Product) => element.productID == product.productID
+    );
+    if (replacearray) replacearray[foundIndex as number] = product;
+    setData(replacearray);
+  };
+  const deleteProduct = (product: Product) => {
+    var foundIndex = data?.findIndex(
+      (element: Product) => element.productID == product.productID
+    );
+    if (replacearray) replacearray[foundIndex as number] = product;
+    replacearray?.slice(foundIndex, 1);
+    setData(replacearray);
+  };
 
   return (
     <div className="menu-book flex-1 ">
-      {/* <div className="model"> */}
-      <AddNewDishModal open={openAddNewDishModal} handleClose={() => setOpenAddNewDishModal(false)} createProduct={(product:Product)=>createProduct(product)}/>
+      <AddNewDishModal
+        open={openAddNewDishModal}
+        handleClose={() => setOpenAddNewDishModal(false)}
+      />
       <ViewDishModel
         open={openViewDishModal}
         handleClose={() => {
@@ -49,10 +53,8 @@ function MenuBook() {
           setViewedProduct(null);
         }}
         product={viewedProduct || null}
-        editProduct={(product)=>editProduct(product)}
-        deleteProduct={(product)=>deleteProduct(product)}
+        setCategory={setCategory}
       />
-      {/* </div> */}
       <div>
         <div className="text-4xl font-extrabold m-5">
           <p>Today Menu!</p>
@@ -62,22 +64,49 @@ function MenuBook() {
         </div>
       </div>
       <div className="grid grid-cols-2 ">
-        <div className="grid grid-cols-4 m-5 mt-10 flex-col w-8/12">
-          <div className="flex-col">
+        <div className="grid grid-cols-3 m-5 mt-10 flex-col w-8/12 gap-2">
+          <div className="flex-col inline-flex">
             <Button
+              className="text-xs"
+              sx={{
+                color: (category== "Refreshment")?"white":"black",
+                backgroundColor: (category== "Refreshment") ? "black !important" : "white",
+                borderColor: "black",
+                borderRadius: "0.5rem",
+              }}
               variant="outlined"
               onClick={() => setCategory("Refreshment")}
             >
               Refreshment
             </Button>
           </div>
-          <div className="flex-col">
-            <Button variant="outlined" onClick={() => setCategory("Classics")}>
+          <div className="flex-col inline-flex md">
+            <Button
+              className="text-xs"
+              sx={{
+                color: (category== "Classics")?"white":"black",
+                backgroundColor: (category== "Classics") ? "black !important" : "white",
+                borderColor: "black",
+                borderRadius: "0.5rem",
+              }}
+              variant="outlined"
+              onClick={() => setCategory("Classics")}
+            >
               Classics
             </Button>
           </div>
-          <div className="flex-col">
-            <Button variant="outlined" onClick={() => setCategory("Tea Latte")}>
+          <div className="flex-col inline-flex">
+            <Button
+              className="text-xs"
+              sx={{
+                color: (category== "Tea Latte")?"white":"black",
+                backgroundColor: (category== "Tea Latte") ? "black !important" : "white",
+                borderColor: "black",
+                borderRadius: "0.5rem",
+              }}
+              variant="outlined"
+              onClick={() => setCategory("Tea Latte")}
+            >
               Tea Latte
             </Button>
           </div>
@@ -85,6 +114,15 @@ function MenuBook() {
         <div className="justify-end flex align-middle m-5 mt-10 fle">
           <Button
             variant="outlined"
+            sx={{
+              color: "black",
+              borderColor: "black",
+              borderRadius: "0.5rem",
+              "&:hover": {
+                backgroundColor: "black",
+                color: "white",
+              },
+            }}
             onClick={() => {
               setOpenAddNewDishModal(true);
             }}
@@ -96,20 +134,20 @@ function MenuBook() {
       {!data ? (
         <p>Loading</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8">
+        <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 mt-4">
           {data!.map((product) => (
             <div
-              className="text-2xl ms-5 dish border-solid shadow-lg  grid grid-cols-1"
+              className=" ms-5  border-solid shadow-lg ring ring-slate-400 ring-opacity-5 grid grid-cols-1 cursor-pointer rounded-lg"
               onClick={() => {
                 setOpenViewDishModal(true);
                 setViewedProduct(product);
               }}
             >
-              <div className="justify-end flex me-5 mt-2">
-                <p>{product.productName}</p>
+              <div className="justify-start flex text-lg me-5 mt-2 ms-3 font-semibold">
+                <p className="truncate">{product.productName}</p>
               </div>
-              <div className="justify-end flex me-5">
-                <p>${product.price}</p>
+              <div className="justify-end flex me-5 mb-2">
+                <p className="text-sm">${product.price}</p>
               </div>
             </div>
           ))}
