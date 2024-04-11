@@ -1,44 +1,52 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import { GetMethod } from "../Utilities/Fetch/GetMethod";
-import AddNewDishModal from "../Modal/AddNewDishModal";
-import { Product } from "../Utilities/Interfacte/Product/Index";
-import ViewDishModel from "../Modal/ViewDishModal";
+
 import { Button } from "@mui/material";
-function MenuBook() {
+import { GetMethod } from "@/app/Utilities/Fetch/GetMethod";
+import AddNewDishModal from "@/app/Modal/AddNewDishModal";
+import ViewDishModel from "@/app/Modal/ViewDishModal";
+import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
+import { Product } from "@/app/Utilities/Interfacte/Product";
+interface Property {
+  type: "menu" | "order";
+  order: OrderItem[];
+  setOrder: ([]) => void;
+}
+
+function MenuBook(property: Property) {
+  const { type, order, setOrder } = property;
   const [data, setData] = useState<Product[] | null>(null);
   const [category, setCategory] = useState<String | null>("Refreshment");
   const [openViewDishModal, setOpenViewDishModal] = React.useState(false);
   const [openAddNewDishModal, setOpenAddNewDishModal] = React.useState(false);
   const [viewedProduct, setViewedProduct] = useState<Product | null>(null);
+
   useEffect(() => {
     try {
-      setTimeout(()=>{
+      setTimeout(() => {
         GetMethod(`/products?category=${category}`).then((result: any) => {
           setData(result.data);
         });
-      },1)
+      }, 1);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }, [category, viewedProduct]);
-  var replacearray = data;
-  const editProduct = (product: Product) => {
-    var foundIndex = data?.findIndex(
-      (element: Product) => element.productID == product.productID
+
+  function addOrder(product: Product) {
+    const index = order.findIndex(
+      (orderItem) => orderItem.productID == product.productID
     );
-    if (replacearray) replacearray[foundIndex as number] = product;
-    setData(replacearray);
-  };
-  const deleteProduct = (product: Product) => {
-    var foundIndex = data?.findIndex(
-      (element: Product) => element.productID == product.productID
-    );
-    if (replacearray) replacearray[foundIndex as number] = product;
-    replacearray?.slice(foundIndex, 1);
-    setData(replacearray);
-  };
+    const tempOrder = order;
+    const orderItem = order[index];
+    if (orderItem) {
+      tempOrder[index] = { ...order[index], quantity: orderItem.quantity + 1 };
+    } else {
+      tempOrder.push({ ...product, quantity: 1 });
+    }
+    setOrder(tempOrder);
+  }
 
   return (
     <div className="menu-book flex-1 ">
@@ -69,8 +77,9 @@ function MenuBook() {
             <Button
               className="text-xs"
               sx={{
-                color: (category== "Refreshment")?"white":"black",
-                backgroundColor: (category== "Refreshment") ? "black !important" : "white",
+                color: category == "Refreshment" ? "white" : "black",
+                backgroundColor:
+                  category == "Refreshment" ? "black !important" : "white",
                 borderColor: "black",
                 borderRadius: "0.5rem",
               }}
@@ -84,8 +93,9 @@ function MenuBook() {
             <Button
               className="text-xs"
               sx={{
-                color: (category== "Classics")?"white":"black",
-                backgroundColor: (category== "Classics") ? "black !important" : "white",
+                color: category == "Classics" ? "white" : "black",
+                backgroundColor:
+                  category == "Classics" ? "black !important" : "white",
                 borderColor: "black",
                 borderRadius: "0.5rem",
               }}
@@ -99,8 +109,9 @@ function MenuBook() {
             <Button
               className="text-xs"
               sx={{
-                color: (category== "Tea Latte")?"white":"black",
-                backgroundColor: (category== "Tea Latte") ? "black !important" : "white",
+                color: category == "Tea Latte" ? "white" : "black",
+                backgroundColor:
+                  category == "Tea Latte" ? "black !important" : "white",
                 borderColor: "black",
                 borderRadius: "0.5rem",
               }}
@@ -112,23 +123,27 @@ function MenuBook() {
           </div>
         </div>
         <div className="justify-end flex align-middle m-5 mt-10 fle">
-          <Button
-            variant="outlined"
-            sx={{
-              color: "black",
-              borderColor: "black",
-              borderRadius: "0.5rem",
-              "&:hover": {
-                backgroundColor: "black",
-                color: "white",
-              },
-            }}
-            onClick={() => {
-              setOpenAddNewDishModal(true);
-            }}
-          >
-            Add new Item
-          </Button>
+          {type == "menu" ? (
+            <Button
+              variant="outlined"
+              sx={{
+                color: "black",
+                borderColor: "black",
+                borderRadius: "0.5rem",
+                "&:hover": {
+                  backgroundColor: "black",
+                  color: "white",
+                },
+              }}
+              onClick={() => {
+                setOpenAddNewDishModal(true);
+              }}
+            >
+              Add new Item
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
       {!data ? (
@@ -137,10 +152,14 @@ function MenuBook() {
         <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 mt-4">
           {data!.map((product) => (
             <div
+              key={product.productID}
               className=" ms-5  border-solid shadow-lg ring ring-slate-400 ring-opacity-5 grid grid-cols-1 cursor-pointer rounded-lg"
               onClick={() => {
-                setOpenViewDishModal(true);
-                setViewedProduct(product);
+                if (type == "menu") {
+                  setOpenViewDishModal(true);
+                  setViewedProduct(product);
+                } else type == "order";
+                addOrder(product);
               }}
             >
               <div className="justify-start flex text-lg me-5 mt-2 ms-3 font-semibold">

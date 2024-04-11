@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Product } from "../../Interfacte/Product/Index";
+import { Product } from "../../Interfacte/Product";
 
 export const PutMethod = async (url: string, product: Product): Promise<any | null> => {
   console.log(process.env.NEXT_PUBLIC_API_BASE_URL + url, "url value");

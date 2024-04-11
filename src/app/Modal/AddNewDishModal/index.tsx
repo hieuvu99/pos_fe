@@ -1,9 +1,9 @@
 import { Button, Modal } from "@mui/material";
 import React, { FormEventHandler, useEffect, useState } from "react";
 import "./style.css";
-import { Product } from "@/app/Utilities/Interfacte/Product/Index";
 import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
 import { env } from "process";
+import { Product } from "@/app/Utilities/Interfacte/Product";
 
 interface property {
   open: boolean;

@@ -1,13 +1,12 @@
 import Image from "next/image";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 import Head from "next/head";
-import MenuBook from "./MenuBook";
+import MenuBook from "../components/MenuBook";
 
 export default function Home() {
   return (
     <div className="flex">
-      <NavBar />
-      <MenuBook/>
+      <h1>Home Page</h1>
     </div>
   );
 }
