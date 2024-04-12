@@ -6,19 +6,26 @@ import RootLayout from "@/app/layout";
 import OrderSummary from "@/components/OrderSummary";
 import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
 
-function Menubook() {
+function Order() {
   const [isClient, setIsClient] = useState(false);
-  const [order , setOrder] = useState<OrderItem[]>([]);
+  const [order, setOrder] = useState<OrderItem[]>([]);
   useEffect(() => {
     setIsClient(true);
   }, []);
+  useEffect(() => {
+    // console.log(order);
+  }, [order]);
 
   return (
     <>
       {isClient ? (
         <RootLayout metadata={metadata}>
-          <MenuBook type="order" order={order} setOrder={setOrder}/>
-          <OrderSummary order={order}/>
+          <MenuBook
+            type="order"
+            order={order}
+            setOrder={(order: OrderItem[]) => setOrder(order)}
+          />
+          {order.length >= 1 && <OrderSummary order={order} />}
         </RootLayout>
       ) : (
         <></>
@@ -27,4 +34,4 @@ function Menubook() {
   );
 }
 
-export default Menubook;
+export default Order;

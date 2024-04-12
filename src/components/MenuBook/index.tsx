@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./style.css";
-
 import { Button } from "@mui/material";
 import { GetMethod } from "@/app/Utilities/Fetch/GetMethod";
 import AddNewDishModal from "@/app/Modal/AddNewDishModal";
@@ -10,8 +9,8 @@ import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
 import { Product } from "@/app/Utilities/Interfacte/Product";
 interface Property {
   type: "menu" | "order";
-  order: OrderItem[];
-  setOrder: ([]) => void;
+  order?: OrderItem[];
+  setOrder?: (order: OrderItem[]) => void;
 }
 
 function MenuBook(property: Property) {
@@ -35,21 +34,26 @@ function MenuBook(property: Property) {
   }, [category, viewedProduct]);
 
   function addOrder(product: Product) {
-    const index = order.findIndex(
-      (orderItem) => orderItem.productID == product.productID
-    );
-    const tempOrder = order;
-    const orderItem = order[index];
-    if (orderItem) {
-      tempOrder[index] = { ...order[index], quantity: orderItem.quantity + 1 };
-    } else {
-      tempOrder.push({ ...product, quantity: 1 });
+    if (order && setOrder) {
+      const index = order.findIndex(
+        (orderItem) => orderItem.productID == product.productID
+      );
+      const tempOrder = [...order];
+      const orderItem = order[index];
+      if (orderItem) {
+        tempOrder[index] = {
+          ...order[index],
+          quantity: orderItem.quantity + 1,
+        };
+      } else {
+        tempOrder.push({ ...product, quantity: 1 });
+      }
+      setOrder(tempOrder);
     }
-    setOrder(tempOrder);
   }
 
   return (
-    <div className="menu-book flex-1 ">
+    <div className={(order&&order?.length>=1) ?"w-4/6":""}>
       <AddNewDishModal
         open={openAddNewDishModal}
         handleClose={() => setOpenAddNewDishModal(false)}
@@ -123,7 +127,7 @@ function MenuBook(property: Property) {
           </div>
         </div>
         <div className="justify-end flex align-middle m-5 mt-10 fle">
-          {type == "menu" ? (
+          {type == "menu" && (
             <Button
               variant="outlined"
               sx={{
@@ -141,8 +145,6 @@ function MenuBook(property: Property) {
             >
               Add new Item
             </Button>
-          ) : (
-            <></>
           )}
         </div>
       </div>
