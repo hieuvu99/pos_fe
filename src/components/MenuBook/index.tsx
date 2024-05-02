@@ -1,12 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { GetMethod } from "@/app/Utilities/Fetch/GetMethod";
 import AddNewDishModal from "@/app/Modal/AddNewDishModal";
 import ViewDishModel from "@/app/Modal/ViewDishModal";
 import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
 import { Product } from "@/app/Utilities/Interfacte/Product";
+import { useSnackbar } from "@/app/Utilities/SnackBar";
+
 interface Property {
   type: "menu" | "order";
   order?: OrderItem[];
@@ -14,6 +16,8 @@ interface Property {
 }
 
 function MenuBook(property: Property) {
+  const { handleSnackbar } = useSnackbar();
+
   const { type, order, setOrder } = property;
   const [data, setData] = useState<Product[] | null>(null);
   const [category, setCategory] = useState<String | null>("Refreshment");
@@ -24,12 +28,15 @@ function MenuBook(property: Property) {
   useEffect(() => {
     try {
       setTimeout(() => {
-        GetMethod(`/products?category=${category}`).then((result: any) => {
-          setData(result.data);
-        });
+        GetMethod(`/products?category=${category}`, handleSnackbar as any).then(
+          (result: any) => {
+            result && setData(result.data);
+          }
+        );
       }, 1);
     } catch (error) {
       console.error("Error fetching data:", error);
+      handleSnackbar(error as any, "error");
     }
   }, [category, viewedProduct]);
 
@@ -53,7 +60,7 @@ function MenuBook(property: Property) {
   }
 
   return (
-    <div className={(order&&order?.length>=1) ?"w-4/6":""}>
+    <div className={`${order && order?.length >= 1 ? "w-4/6" : "w-5/6"} me-5`}>
       <AddNewDishModal
         open={openAddNewDishModal}
         handleClose={() => setOpenAddNewDishModal(false)}
@@ -149,7 +156,9 @@ function MenuBook(property: Property) {
         </div>
       </div>
       {!data ? (
-        <p>Loading</p>
+        <div className="ms-96 mt-52">
+          <CircularProgress className="ms-96" />
+        </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 mt-4">
           {data!.map((product) => (

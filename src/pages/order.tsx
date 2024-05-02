@@ -13,23 +13,22 @@ function Order() {
     setIsClient(true);
   }, []);
   useEffect(() => {
-    // console.log(order);
   }, [order]);
 
   return (
     <>
-      {isClient ? (
+      {isClient && (
         <RootLayout metadata={metadata}>
           <MenuBook
             type="order"
             order={order}
             setOrder={(order: OrderItem[]) => setOrder(order)}
           />
-          {order.length >= 1 && <OrderSummary order={order} />}
+          {order.length >= 1 && (
+            <OrderSummary order={order} setOrder={setOrder} />
+          )}
         </RootLayout>
-      ) : (
-        <></>
-      )}
+      ) }
     </>
   );
 }

@@ -6,6 +6,7 @@ import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
 import { Edit, Delete, ArrowBack, Save, Cancel } from "@mui/icons-material";
 import { PatchMethod } from "@/app/Utilities/Fetch/PatchMethod";
 import { PutMethod } from "@/app/Utilities/Fetch/PutMethod";
+import { useSnackbar } from "@/app/Utilities/SnackBar";
 
 interface property {
   open: boolean;
@@ -15,7 +16,9 @@ interface property {
 }
 // const setValue()
 function ViewDishModel(Property: property) {
-  const { open, handleClose, product , setCategory} = Property;
+  const { handleSnackbar } = useSnackbar();
+
+  const { open, handleClose, product, setCategory } = Property;
   const [editedProduct, setEditProduct] = useState<Product>();
   const [mode, setMode] = useState<"edit" | "view">("view");
 
@@ -148,12 +151,19 @@ function ViewDishModel(Property: property) {
                   <div className="justify-end flex">
                     <Delete
                       className="cursor-pointer"
-                      onClick={() => {
-                        product?.productID &&
-                          PatchMethod("/products/deletes-product", [
-                            product?.productID,
-                          ]);
-                        handleCloseModal;
+                      onClick={(e) => {
+                        e.preventDefault;
+                        let result =
+                          product?.productID &&
+                          PatchMethod(
+                            "/products/deletes-product",
+                            [product?.productID],
+                            handleSnackbar as any
+                          );
+
+                        result &&
+                          handleSnackbar("Delete Succesfully", "success");
+                        handleCloseModal();
                       }}
                     />
                   </div>
@@ -163,16 +173,22 @@ function ViewDishModel(Property: property) {
                   <div className=" justify-start flex">
                     <Save
                       onClick={(e) => {
+                        e.preventDefault;
                         if (
                           product?.price != editedProduct?.price ||
                           product?.productName != editedProduct?.productName ||
                           product?.productType != editedProduct?.productType!
                         ) {
-                          PutMethod("/products", editedProduct as Product);
-                          setCategory(editedProduct?.productType as string)
+                          let result = PutMethod(
+                            "/products",
+                            editedProduct as Product,
+                            handleSnackbar as any
+                          );
+                          setCategory(editedProduct?.productType as string);
+                          result != null &&
+                            handleSnackbar("Succesfully Modified", "success");
                           handleCloseModal();
                         }
-                        // e.preventDefault
                       }}
                       className="cursor-pointer"
                     />

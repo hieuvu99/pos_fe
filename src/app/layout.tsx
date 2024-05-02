@@ -1,7 +1,9 @@
+'use client'
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "../components/NavBar";
+import { SnackbarProvider } from "./Utilities/SnackBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,15 +12,16 @@ type LayoutProps = {
   metadata: Metadata;
 };
 
-
 export default function RootLayout({ children, metadata }: LayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex">
-          <NavBar />
-          {children}
-        </div>
+        <SnackbarProvider>
+          <div className="flex">
+            <NavBar />
+            {children}
+          </div>
+        </SnackbarProvider>
       </body>
     </html>
   );

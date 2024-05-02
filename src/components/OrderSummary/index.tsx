@@ -2,12 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
 import "./style.css";
 import PropTypes from "prop-types";
-import { Button } from "@mui/material";
-import { CreditCard, LocalAtm } from "@mui/icons-material";
+import { Button, Snackbar } from "@mui/material";
+import {
+  Close,
+  CreditCard,
+  LocalAtm,
+  RemoveCircleOutline,
+} from "@mui/icons-material";
 import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
+import { useSnackbar } from "@/app/Utilities/SnackBar";
+import Order from "@/pages/order";
 
 function OrderSummary(props: Props) {
-  const { order } = props;
+  const { handleSnackbar } = useSnackbar();
+  const { order, setOrder } = props;
   const [orderItems, setOrderItems] = useState<[]>([]);
   const [sum, setSum] = useState<number>(0);
   const [tax, setTax] = useState<number>(0);
@@ -82,8 +90,14 @@ function OrderSummary(props: Props) {
   }, [totalRows, rowHeight]);
 
   return (
-    <div className="w-96 border-solid shadow-lg h-screen mt-10">
-      <div className="ms-5">
+    <div className="w-96 border-solid shadow-lg h-screen ms-10">
+      <div
+        className="flex justify-end mr-5 mt-5 opacity-75 cursor-pointer"
+        onClick={() => setOrder([])}
+      >
+        <Close />
+      </div>
+      <div className="ms-5 mt-3">
         <div className="flex">
           <p className="text-2xl font-bold">Bill</p>
         </div>
@@ -93,10 +107,34 @@ function OrderSummary(props: Props) {
           className="mt-5 mb-10"
         >
           <table className="table-auto">
-            {order.map((orderItem) => {
+            {order.map((orderItem: OrderItem) => {
               return (
                 <tr>
-                  <td className="w-14"></td>
+                  <td className="w-14">
+                    <div
+                      className="m-2 cursor-pointer"
+                      onClick={() => {
+                        let modifiedOrder: OrderItem[] = [...order];
+                        let modifiedIndexNo = order.findIndex(
+                          (Element: OrderItem) =>
+                            Element.productID == orderItem.productID
+                        );
+                        let modifiedIndex: OrderItem | undefined;
+                        if (modifiedIndexNo != -1) {
+                          modifiedIndex = {
+                            ...order[modifiedIndexNo],
+                            quantity: order[modifiedIndexNo].quantity - 1,
+                          };
+                          if (modifiedIndex?.quantity == 0)
+                            modifiedOrder.splice(modifiedIndexNo, 1);
+                          else modifiedOrder[modifiedIndexNo] = modifiedIndex;
+                          setOrder(modifiedOrder);
+                        }
+                      }}
+                    >
+                      <RemoveCircleOutline />
+                    </div>
+                  </td>
                   <td className="grid grid-cols-1 w-48">
                     <div className="mt-5 mb-5">
                       <p>{orderItem.productName}</p>
@@ -117,7 +155,7 @@ function OrderSummary(props: Props) {
             })}
           </table>
         </div>
-        <div className="divide-y-2 div divide-black divide-dashed divide-opacity-50">
+        <div className="w-80 divide-y-2 div divide-black divide-dashed divide-opacity-50">
           <div>
             <table>
               <tr>
@@ -156,7 +194,7 @@ function OrderSummary(props: Props) {
           </div>
         </div>
         <div>
-          <div className="text-2xl font-extrabold mt-5">
+          <div className="text-2xl font-extrabold mt-5 mb-5">
             <p>Payment Method</p>
           </div>
           <div className="grid-cols-2 grid">
@@ -165,14 +203,15 @@ function OrderSummary(props: Props) {
                 variant="outlined"
                 className="inline-block"
                 sx={{
-                  borderColor: "black",
+                  borderColor: "black!important",
                   color: "black",
                   display: "block",
-                  width: "11rem",
+                  width: "10rem",
                   height: "5rem",
                   borderRadius: "0.5rem",
+                  opacity: paymentMethod != "Cash" ? "50%" : "100%",
                 }}
-                onClick={() => setPaymentMethod("Card")}
+                onClick={() => setPaymentMethod("Cash")}
               >
                 <LocalAtm />
                 <p>Cash</p>
@@ -182,21 +221,22 @@ function OrderSummary(props: Props) {
               <Button
                 variant="outlined"
                 sx={{
-                  borderColor: "black",
+                  borderColor: "black!important",
                   color: "black",
                   display: "block",
-                  width: "11rem",
+                  width: "10rem",
                   height: "5rem",
                   borderRadius: "0.5rem",
+                  opacity: paymentMethod != "Card" ? "50%" : "100%",
                 }}
-                onClick={() => setPaymentMethod("Cash")}
+                onClick={() => setPaymentMethod("Card")}
               >
                 <CreditCard />
                 <p>Debit/Credit</p>
               </Button>
             </div>
           </div>
-          <div className="mt-3">
+          <div className="mt-5">
             <Button
               className="text-xs"
               sx={{
@@ -204,15 +244,23 @@ function OrderSummary(props: Props) {
                 backgroundColor: "black !important",
                 borderColor: "black",
                 borderRadius: "0.5rem",
-                width: "22rem",
+                width: "21.5rem",
               }}
               variant="outlined"
               onClick={() => {
-                if (order.length >= 1 && paymentMethod != null)
-                  PostMethod("/create-order", {
-                    orderItems: orderItems,
-                    order: { cost: total, paymentType: paymentMethod },
-                  });
+                if (order.length >= 1 && paymentMethod != null) {
+                  let result = PostMethod(
+                    "/create-order",
+                    {
+                      orderItems: orderItems,
+                      order: { cost: total, paymentType: paymentMethod },
+                    },
+                    handleSnackbar as any
+                  );
+                  result != null &&
+                    handleSnackbar("Order Created Successfully", "success");
+                  setOrder([]);
+                }
               }}
             >
               Print Bills
@@ -226,6 +274,7 @@ function OrderSummary(props: Props) {
 
 interface Props {
   order: OrderItem[];
+  setOrder: ([]) => void;
 }
 
 export default OrderSummary;

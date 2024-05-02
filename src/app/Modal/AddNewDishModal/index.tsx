@@ -4,6 +4,7 @@ import "./style.css";
 import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
 import { env } from "process";
 import { Product } from "@/app/Utilities/Interfacte/Product";
+import { useSnackbar } from "@/app/Utilities/SnackBar";
 
 interface property {
   open: boolean;
@@ -11,6 +12,7 @@ interface property {
 }
 // const setValue()
 function AddNewDishModal(Property: property) {
+  const { handleSnackbar } = useSnackbar();
   const { open, handleClose } = Property;
 
   const [newProduct, setNewProduct] = useState<Product | null>({
@@ -39,10 +41,15 @@ function AddNewDishModal(Property: property) {
     }
   };
 
-  const handleFormSubmit = (e: any) => {
-    PostMethod("/products", newProduct as Product);
-    // e.preventDefault();
-    handleClose
+  const handleFormSubmit = async (e: any) => {
+    e.preventDefault();
+    var result = await PostMethod(
+      "/products",
+      newProduct as Product,
+      handleSnackbar as any
+    );
+    result != null && handleSnackbar("Created New Dish Succefully", "success");
+    handleClose();
   };
 
   return (
