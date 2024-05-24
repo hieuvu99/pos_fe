@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 
 function NavBar() {
   const { pathname } = useRouter();
+  console.log(pathname)
   return (
     <div className="nav-bar h-screen border-solid shadow-lg">
       <div className="logo flex justify-center font-thin  mb-5">
@@ -20,10 +21,10 @@ function NavBar() {
         <div className=" flex justify-center">
           <div
             className={`navigate-button rounded-full p-5 ${
-              pathname == "/order" && "text-white bg-gray-600 opacity-100"
+              pathname == "/createorder" && "text-white bg-gray-600 opacity-100"
             }`}
           >
-            <Link href={"/order"}>
+            <Link href={"/createorder"}>
               <AddCircleOutline className="cursor-pointer" />
             </Link>
           </div>

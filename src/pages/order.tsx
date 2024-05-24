@@ -1,36 +1,38 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { metadata } from "@/app/Utilities/MetaData/metadata";
-import MenuBook from "@/components/MenuBook";
 import RootLayout from "@/app/layout";
-import OrderSummary from "@/components/OrderSummary";
-import { OrderItem } from "@/app/Utilities/Interfacte/OrderItem";
+import OrderInfo from "@/components/OrderInfo";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-function Order() {
+function order() {
   const [isClient, setIsClient] = useState(false);
-  const [order, setOrder] = useState<OrderItem[]>([]);
+
+  const router = useRouter();
+  const { orderID } = router.query;
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   useEffect(() => {
-  }, [order]);
+    if (orderID) {
+    }
+  }, [orderID]);
 
   return (
     <>
       {isClient && (
         <RootLayout metadata={metadata}>
-          <MenuBook
-            type="order"
-            order={order}
-            setOrder={(order: OrderItem[]) => setOrder(order)}
-          />
-          {order.length >= 1 && (
-            <OrderSummary order={order} setOrder={setOrder} />
-          )}
+          <div>
+            <div className="text-4xl font-extrabold m-5">
+              <p>Order</p>
+            </div>
+            <OrderInfo orderID={orderID} />
+          </div>
         </RootLayout>
-      ) }
+      )}
     </>
   );
 }
 
-export default Order;
+export default order;

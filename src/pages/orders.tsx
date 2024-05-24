@@ -14,7 +14,12 @@ function orders() {
     <>
       {isClient && (
         <RootLayout metadata={metadata}>
-          <Orders/>
+          <div className="flex-auto">
+            <div className="text-4xl font-extrabold m-5">
+              <p>Order</p>
+            </div>
+            <Orders />
+          </div>
         </RootLayout>
       )}
     </>

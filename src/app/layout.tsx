@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -19,7 +19,7 @@ export default function RootLayout({ children, metadata }: LayoutProps) {
         <SnackbarProvider>
           <div className="flex">
             <NavBar />
-            {children}
+            <div className="content">{children}</div>
           </div>
         </SnackbarProvider>
       </body>

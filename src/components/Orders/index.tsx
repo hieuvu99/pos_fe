@@ -3,7 +3,7 @@ import OrderTable from '../OrderTable'
 
 function Orders() {
   return (
-    <div className='mt-20 ms-52 me-52 w-4/6 border-solid shadow-sm '>
+    <div className='mt-8 lg:ms-20 ms-5 me-20 border-solid shadow-sm '>
       <OrderTable/>
     </div>
   )
