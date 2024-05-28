@@ -33,6 +33,7 @@ function OrderSummary(props: Props) {
     const multiplier = Math.pow(10, precision);
     return Math.round(num * multiplier) / multiplier;
   }
+  const cursor: any = containerRef.current;
 
   useEffect(() => {
     let tempSum = 0;
@@ -69,8 +70,8 @@ function OrderSummary(props: Props) {
 
   useEffect(() => {
     function handleScroll() {
-      const scrollTop = containerRef?.current?.scrollTop;
-      const containerHeight = containerRef?.current?.clientHeight;
+      const scrollTop = cursor.scrollTop;
+      const containerHeight = cursor.clientHeight;
       const totalHeight = totalRows * rowHeight;
 
       // Check if user reached the bottom of the container
@@ -81,192 +82,195 @@ function OrderSummary(props: Props) {
     }
 
     // Add scroll event listener to the container
-    containerRef?.current?.addEventListener("scroll", handleScroll);
+    cursor && cursor.addEventListener("scroll", handleScroll);
 
     return () => {
       // Clean up event listener
-      containerRef?.current?.removeEventListener("scroll", handleScroll);
+      cursor && cursor.removeEventListener("scroll", handleScroll);
     };
   }, [totalRows, rowHeight]);
 
   return (
-    <div className="w-96 border-solid shadow-lg h-screen ms-10">
-      <div
-        className="flex justify-end mr-5 mt-5 opacity-75 cursor-pointer"
-        onClick={() => setOrder([])}
-      >
-        <Close />
-      </div>
-      <div className="ms-5 mt-3">
-        <div className="flex">
-          <p className="text-2xl font-bold">Bill</p>
-        </div>
+    <div className=" border-solid shadow-lg h-screen  justify-end">
+      <div className="">
         <div
-          ref={containerRef}
-          style={{ height: "400px", overflowY: "auto" }}
-          className="mt-5 mb-10"
+          className="flex justify-end mr-5 mt-5 opacity-75 cursor-pointer"
+          onClick={() => setOrder([])}
         >
-          <table className="table-auto">
-            {order.map((orderItem: OrderItem) => {
-              return (
+          <Close />
+        </div>
+        <div className="ms-5 mt-3">
+          <div className="flex">
+            <p className="text-2xl font-bold">Bill</p>
+          </div>
+          <div
+            ref={containerRef}
+            style={{  overflowY: "auto" }}
+            className="mt-5 mb-10 lg:h-52 xl:h-96"
+          >
+            <table className="table-auto">
+              {order.map((orderItem: OrderItem) => {
+                return (
+                  <tr>
+                    <td className="w-14">
+                      <div
+                        className="m-2 cursor-pointer"
+                        onClick={() => {
+                          let modifiedOrder: OrderItem[] = [...order];
+                          let modifiedIndexNo = order.findIndex(
+                            (Element: OrderItem) =>
+                              Element.productID == orderItem.productID
+                          );
+                          let modifiedIndex: OrderItem | undefined;
+                          if (modifiedIndexNo != -1) {
+                            modifiedIndex = {
+                              ...order[modifiedIndexNo],
+                              quantity: order[modifiedIndexNo].quantity - 1,
+                            };
+                            if (modifiedIndex?.quantity == 0)
+                              modifiedOrder.splice(modifiedIndexNo, 1);
+                            else modifiedOrder[modifiedIndexNo] = modifiedIndex;
+                            setOrder(modifiedOrder);
+                          }
+                        }}
+                      >
+                        <RemoveCircleOutline />
+                      </div>
+                    </td>
+                    <td className="grid grid-cols-1 w-48">
+                      <div className="mt-5 mb-5">
+                        <p>{orderItem.productName}</p>
+                        <p className="justify-end">x {orderItem.quantity}</p>
+                      </div>
+                    </td>
+                    <td className="w-7"></td>
+                    <td className="justify-end">
+                      $
+                      {orderItem.price &&
+                        toFixedNumber(
+                          toFixedNumber(orderItem.price, 2) *
+                            orderItem.quantity,
+                          2
+                        )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
+          <div className="w-80 divide-y-2 div divide-black divide-dashed divide-opacity-50">
+            <div>
+              <table>
                 <tr>
-                  <td className="w-14">
-                    <div
-                      className="m-2 cursor-pointer"
-                      onClick={() => {
-                        let modifiedOrder: OrderItem[] = [...order];
-                        let modifiedIndexNo = order.findIndex(
-                          (Element: OrderItem) =>
-                            Element.productID == orderItem.productID
-                        );
-                        let modifiedIndex: OrderItem | undefined;
-                        if (modifiedIndexNo != -1) {
-                          modifiedIndex = {
-                            ...order[modifiedIndexNo],
-                            quantity: order[modifiedIndexNo].quantity - 1,
-                          };
-                          if (modifiedIndex?.quantity == 0)
-                            modifiedOrder.splice(modifiedIndexNo, 1);
-                          else modifiedOrder[modifiedIndexNo] = modifiedIndex;
-                          setOrder(modifiedOrder);
-                        }
-                      }}
-                    >
-                      <RemoveCircleOutline />
-                    </div>
+                  <td>
+                    <p>Subtotal</p>
                   </td>
-                  <td className="grid grid-cols-1 w-48">
-                    <div className="mt-5 mb-5">
-                      <p>{orderItem.productName}</p>
-                      <p className="justify-end">x {orderItem.quantity}</p>
-                    </div>
-                  </td>
-                  <td className="w-7"></td>
-                  <td className="justify-end">
-                    $
-                    {orderItem.price &&
-                      toFixedNumber(
-                        toFixedNumber(orderItem.price, 2) * orderItem.quantity,
-                        2
-                      )}
+                  <td className=" w-52"></td>
+                  <td>
+                    <p>${sum}</p>
                   </td>
                 </tr>
-              );
-            })}
-          </table>
-        </div>
-        <div className="w-80 divide-y-2 div divide-black divide-dashed divide-opacity-50">
+                <tr>
+                  <td>
+                    <p>Tax (13%)</p>
+                  </td>
+                  <td className=" w-52"></td>
+                  <td>
+                    <p>${tax}</p>
+                  </td>
+                </tr>
+                <tr className="h-10"></tr>
+              </table>
+            </div>
+            <div className="">
+              <table>
+                <tr>
+                  <td>
+                    <p>Total</p>
+                  </td>
+                  <td className="flex-1 w-60"></td>
+                  <td>
+                    <p>${total}</p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
           <div>
-            <table>
-              <tr>
-                <td>
-                  <p>Subtotal</p>
-                </td>
-                <td className=" w-52"></td>
-                <td>
-                  <p>${sum}</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p>Tax (13%)</p>
-                </td>
-                <td className=" w-52"></td>
-                <td>
-                  <p>${tax}</p>
-                </td>
-              </tr>
-              <tr className="h-10"></tr>
-            </table>
-          </div>
-          <div className="">
-            <table>
-              <tr>
-                <td>
-                  <p>Total</p>
-                </td>
-                <td className="flex-1 w-60"></td>
-                <td>
-                  <p>${total}</p>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div>
-          <div className="text-2xl font-extrabold mt-5 mb-5">
-            <p>Payment Method</p>
-          </div>
-          <div className="grid-cols-2 grid">
-            <div className="">
-              <Button
-                variant="outlined"
-                className="inline-block"
-                sx={{
-                  borderColor: "black!important",
-                  color: "black",
-                  display: "block",
-                  width: "10rem",
-                  height: "5rem",
-                  borderRadius: "0.5rem",
-                  opacity: paymentMethod != "Cash" ? "50%" : "100%",
-                }}
-                onClick={() => setPaymentMethod("Cash")}
-              >
-                <LocalAtm />
-                <p>Cash</p>
-              </Button>
+            <div className="text-2xl font-extrabold mt-5 mb-5">
+              <p>Payment Method</p>
             </div>
-            <div className="">
+            <div className="grid-cols-2 grid">
+              <div className="">
+                <Button
+                  variant="outlined"
+                  className="inline-block"
+                  sx={{
+                    borderColor: "black!important",
+                    color: "black",
+                    display: "block",
+                    width: "10rem",
+                    height: "5rem",
+                    borderRadius: "0.5rem",
+                    opacity: paymentMethod != "Cash" ? "50%" : "100%",
+                  }}
+                  onClick={() => setPaymentMethod("Cash")}
+                >
+                  <LocalAtm />
+                  <p>Cash</p>
+                </Button>
+              </div>
+              <div className="">
+                <Button
+                  variant="outlined"
+                  sx={{
+                    borderColor: "black!important",
+                    color: "black",
+                    display: "block",
+                    width: "10rem",
+                    height: "5rem",
+                    borderRadius: "0.5rem",
+                    opacity: paymentMethod != "Card" ? "50%" : "100%",
+                  }}
+                  onClick={() => setPaymentMethod("Card")}
+                >
+                  <CreditCard />
+                  <p>Debit/Credit</p>
+                </Button>
+              </div>
+            </div>
+            <div className="mt-5">
               <Button
-                variant="outlined"
+                className="text-xs"
                 sx={{
-                  borderColor: "black!important",
-                  color: "black",
-                  display: "block",
-                  width: "10rem",
-                  height: "5rem",
+                  color: "white",
+                  backgroundColor: "black !important",
+                  borderColor: "black",
                   borderRadius: "0.5rem",
-                  opacity: paymentMethod != "Card" ? "50%" : "100%",
+                  width: "21.5rem",
                 }}
-                onClick={() => setPaymentMethod("Card")}
+                variant="outlined"
+                onClick={() => {
+                  if (order.length >= 1 && paymentMethod != null) {
+                    let result = PostMethod(
+                      "/create-order",
+                      {
+                        orderItems: orderItems,
+                        order: { cost: total, paymentType: paymentMethod },
+                      },
+                      handleSnackbar as any
+                    );
+                    result != null &&
+                      handleSnackbar("Order Created Successfully", "success");
+                    setOrder([]);
+                  }
+                }}
               >
-                <CreditCard />
-                <p>Debit/Credit</p>
+                Print Bills
               </Button>
             </div>
           </div>
-          <div className="mt-5">
-            <Button
-              className="text-xs"
-              sx={{
-                color: "white",
-                backgroundColor: "black !important",
-                borderColor: "black",
-                borderRadius: "0.5rem",
-                width: "21.5rem",
-              }}
-              variant="outlined"
-              onClick={() => {
-                if (order.length >= 1 && paymentMethod != null) {
-                  let result = PostMethod(
-                    "/create-order",
-                    {
-                      orderItems: orderItems,
-                      order: { cost: total, paymentType: paymentMethod },
-                    },
-                    handleSnackbar as any
-                  );
-                  result != null &&
-                    handleSnackbar("Order Created Successfully", "success");
-                  setOrder([]);
-                }
-              }}
-            >
-              Print Bills
-            </Button>
-          </div>
-        </div>
+        </div>  
       </div>
     </div>
   );
