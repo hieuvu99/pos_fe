@@ -12,23 +12,28 @@ function createOrder() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-  useEffect(() => {
-  }, [order]);
+  useEffect(() => {}, [order]);
 
   return (
     <>
       {isClient && (
         <RootLayout metadata={metadata}>
-          <MenuBook
-            type="order"
-            order={order}
-            setOrder={(order: OrderItem[]) => setOrder(order)}
-          />
-          {order.length >= 1 && (
-            <OrderSummary order={order} setOrder={setOrder} />
-          )}
+          <div className="grid grid-flow-col h-screen">
+            <div className="flex-col">
+              <MenuBook
+                type="order"
+                order={order}
+                setOrder={(order: OrderItem[]) => setOrder(order)}
+              />
+            </div>
+            <div className="flex-col">
+              {order.length >= 1 && (
+                <OrderSummary order={order} setOrder={setOrder} />
+              )}
+            </div>
+          </div>
         </RootLayout>
-      ) }
+      )}
     </>
   );
 }

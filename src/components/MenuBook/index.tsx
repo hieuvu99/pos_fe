@@ -60,7 +60,7 @@ function MenuBook(property: Property) {
   }
 
   return (
-    <div className={`${order && order?.length >= 1 ? "w-4/6" : "w-5/6"} me-5`}>
+    <div className={`${order && order?.length >= 1 ? "md:4/6 lg:5/6" : "5/6"} me-5`}>
       <AddNewDishModal
         open={openAddNewDishModal}
         handleClose={() => setOpenAddNewDishModal(false)}
@@ -82,7 +82,7 @@ function MenuBook(property: Property) {
           <p>Discover whatever you need easily</p>
         </div>
       </div>
-      <div className="grid grid-cols-2 ">
+      <div className={type=="menu"?"flex":"xl:grid xl:grid-cols-2"}>
         <div className="grid grid-cols-3 m-5 mt-10 flex-col w-8/12 gap-2">
           <div className="flex-col inline-flex">
             <Button
@@ -100,7 +100,7 @@ function MenuBook(property: Property) {
               Refreshment
             </Button>
           </div>
-          <div className="flex-col inline-flex md">
+          <div className="flex-col inline-flex">
             <Button
               className="text-xs"
               sx={{
@@ -133,7 +133,7 @@ function MenuBook(property: Property) {
             </Button>
           </div>
         </div>
-        <div className="justify-end flex align-middle m-5 mt-10 fle">
+        <div className="justify-end flex align-middle m-5 mt-10 absolute  right-5">
           {type == "menu" && (
             <Button
               variant="outlined"
@@ -160,7 +160,7 @@ function MenuBook(property: Property) {
           <CircularProgress className="ms-96" />
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 mt-4">
+        <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8 mt-4 me-5">
           {data!.map((product) => (
             <div
               key={product.productID}

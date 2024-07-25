@@ -6,10 +6,8 @@ export const PatchMethod = async (
   array: number[],
   handleSnackbar: (message: string, severity: string) => void
 ): Promise<any | null> => {
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL + url, "url value");
   try {
-    const result = axios.patch(`${"http://localhost:8080/api" + url}`, array);
-    // const result = await response.json();
+    const result = axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`, array);
     return result;
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 
 function NavBar() {
   const { pathname } = useRouter();
-  console.log(pathname)
   return (
     <div className="nav-bar h-screen border-solid shadow-lg">
       <div className="logo flex justify-center font-thin  mb-5">

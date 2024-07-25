@@ -91,7 +91,7 @@ function OrderSummary(props: Props) {
   }, [totalRows, rowHeight]);
 
   return (
-    <div className=" border-solid shadow-lg h-screen  justify-end">
+    <div className=" border-solid shadow-lg  justify-end">
       <div className="">
         <div
           className="flex justify-end mr-5 mt-5 opacity-75 cursor-pointer"
@@ -239,7 +239,7 @@ function OrderSummary(props: Props) {
                 </Button>
               </div>
             </div>
-            <div className="mt-5">
+            <div className="mt-5 me-5 pb-5">
               <Button
                 className="text-xs"
                 sx={{

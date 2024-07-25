@@ -5,9 +5,8 @@ export const GetMethod = async (
   url: string,
   handleSnackbar: (message: string, severity: string) => void
 ): Promise<any | null> => {
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL + url, "url value");
   try {
-    const result = axios.get(`${"http://localhost:8080/api" + url}`);
+    const result = axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`);
     setTimeout
     return result;
   } catch (error) {
