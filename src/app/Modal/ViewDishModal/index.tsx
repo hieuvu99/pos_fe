@@ -2,7 +2,6 @@ import { Button, Modal } from "@mui/material";
 import React, { FormEventHandler, useEffect, useState } from "react";
 // import "./style.css";
 import { Product } from "@/app/Utilities/Interfacte/Product";
-import { PostMethod } from "@/app/Utilities/Fetch/PostMethod";
 import { Edit, Delete, ArrowBack, Save, Cancel } from "@mui/icons-material";
 import { PatchMethod } from "@/app/Utilities/Fetch/PatchMethod";
 import { PutMethod } from "@/app/Utilities/Fetch/PutMethod";

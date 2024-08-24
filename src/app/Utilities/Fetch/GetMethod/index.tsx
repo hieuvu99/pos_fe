@@ -1,12 +1,13 @@
 import axios, { AxiosError } from "axios";
 import { useSnackbar } from "../../SnackBar";
+import AxiosIntance from "../../AxiosIntance";
 
 export const GetMethod = async (
   url: string,
   handleSnackbar: (message: string, severity: string) => void
 ): Promise<any | null> => {
   try {
-    const result = axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`);
+    const result = AxiosIntance.get(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`);
     setTimeout
     return result;
   } catch (error) {

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FormatListBulleted,
   MenuBook,
@@ -8,9 +8,17 @@ import {
 import "./style.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 function NavBar() {
-  const { pathname } = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
   return (
     <div className="nav-bar h-screen border-solid shadow-lg">
       <div className="logo flex justify-center font-thin  mb-5">

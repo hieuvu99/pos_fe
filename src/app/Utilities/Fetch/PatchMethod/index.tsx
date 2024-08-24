@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Product } from "../../Interfacte/Product";
+import AxiosIntance from "../../AxiosIntance";
 
 export const PatchMethod = async (
   url: string,
@@ -7,7 +8,7 @@ export const PatchMethod = async (
   handleSnackbar: (message: string, severity: string) => void
 ): Promise<any | null> => {
   try {
-    const result = axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`, array);
+    const result = AxiosIntance.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL + url}`, array);
     return result;
   } catch (error) {
     console.error("Error fetching data:", error);
